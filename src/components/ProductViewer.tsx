@@ -1,5 +1,5 @@
 
-import React, { Suspense, useRef, useEffect, useState, ErrorBoundary } from 'react';
+import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
