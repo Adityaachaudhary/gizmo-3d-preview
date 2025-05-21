@@ -1,1 +1,10 @@
+
 /// <reference types="vite/client" />
+
+declare module '@react-three/fiber' {
+  export * from '@react-three/fiber/dist/declarations';
+}
+
+declare module '@react-three/drei' {
+  export * from '@react-three/drei/dist/declarations';
+}
