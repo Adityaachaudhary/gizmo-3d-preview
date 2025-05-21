@@ -7,10 +7,13 @@ import LoadingFallback from './LoadingFallback';
 
 // The main ProductViewer component
 export default function ProductViewer() {
-  // Preload the 3D model outside of the Canvas
+  // We can safely preload models outside the Canvas
   useEffect(() => {
+    // Preload the model
     useGLTF.preload('/shoe.glb');
+    
     return () => {
+      // Cleanup preloaded models
       useGLTF.clear('/shoe.glb');
     };
   }, []);
@@ -23,7 +26,7 @@ export default function ProductViewer() {
           dpr={[1, 2]} 
           camera={{ position: [0, 0, 4], fov: 50 }}
         >
-          {/* Everything that uses Three.js hooks MUST be inside Canvas */}
+          {/* All Three.js components and hooks MUST be inside Canvas */}
           <SceneContent />
         </Canvas>
       </Suspense>
@@ -43,26 +46,47 @@ export default function ProductViewer() {
   );
 }
 
-// SceneContent component - This contains all components that need Canvas context
-// This approach ensures all Three.js hooks are used within Canvas context
+// SceneContent component contains everything that needs Canvas context
 function SceneContent() {
   return (
     <>
-      {/* Simple lighting setup */}
+      {/* Lighting setup */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} />
       
-      {/* Load and display the 3D model */}
-      <Model url="/shoe.glb" />
+      {/* Model with error handling */}
+      <Suspense fallback={<FallbackBox />}>
+        <ModelWithErrorBoundary url="/shoe.glb" />
+      </Suspense>
       
-      {/* Add camera controls */}
+      {/* Camera controls */}
       <CanvasControls />
     </>
   );
 }
 
-// Model component - MUST be used within Canvas via SceneContent
+// Simple fallback box when model fails to load
+function FallbackBox() {
+  return (
+    <mesh position={[0, -0.5, 0]} castShadow>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="hotpink" />
+    </mesh>
+  );
+}
+
+// Model component with error boundary - MUST be used within Canvas
+function ModelWithErrorBoundary({ url }: { url: string }) {
+  try {
+    return <Model url={url} />;
+  } catch (error) {
+    console.error("Error loading model:", error);
+    return <FallbackBox />;
+  }
+}
+
+// Model component - MUST be used within Canvas
 function Model({ url }: { url: string }) {
   // useGLTF is a Three.js hook that MUST be used within Canvas
   const { scene } = useGLTF(url);
@@ -83,7 +107,7 @@ function Model({ url }: { url: string }) {
   return <primitive object={scene} scale={1} position={[0, -0.5, 0]} />;
 }
 
-// Controls component - MUST be used within Canvas via SceneContent
+// Controls component - MUST be used within Canvas
 function CanvasControls() {
   const controlsRef = useRef<any>(null);
   
