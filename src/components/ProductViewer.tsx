@@ -58,8 +58,8 @@ function Model({ url }: { url: string }) {
 
 // Controls component - MUST be used within Canvas
 function CanvasControls() {
-  // Define a proper type for the ref
-  const controlsRef = useRef<typeof OrbitControls>(null);
+  // Fix the type annotation for the ref
+  const controlsRef = useRef<any>(null);
   
   useEffect(() => {
     const handleResetCamera = () => {
