@@ -1,7 +1,7 @@
 
+import React, { Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
-import { Suspense, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
