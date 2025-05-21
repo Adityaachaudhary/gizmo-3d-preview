@@ -55,8 +55,8 @@ function SceneContent() {
 
 // DummyProduct component as a replacement for the external model
 function DummyProduct() {
-  // Using correct type for ref
-  const groupRef = useRef<THREE.Group>(null);
+  // Fix: Use correct type for the ref
+  const groupRef = useRef<THREE.Object3D>(null);
   
   useEffect(() => {
     // Simple animation for the group
@@ -74,31 +74,31 @@ function DummyProduct() {
       {/* Main body - shoe sole */}
       <mesh position={[0, -0.7, 0]} castShadow receiveShadow>
         <boxGeometry args={[2, 0.2, 1]} />
-        <meshStandardMaterial attach="material" color="#9b87f5" />
+        <meshStandardMaterial color="#9b87f5" />
       </mesh>
       
       {/* Shoe upper front */}
       <mesh position={[0.4, -0.3, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.2, 0.6, 0.9]} />
-        <meshStandardMaterial attach="material" color="#ffffff" />
+        <meshStandardMaterial color="#ffffff" />
       </mesh>
       
       {/* Shoe heel */}
       <mesh position={[-0.7, -0.3, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.6, 0.6, 0.9]} />
-        <meshStandardMaterial attach="material" color="#1A1F2C" />
+        <meshStandardMaterial color="#1A1F2C" />
       </mesh>
       
       {/* Shoe laces */}
       <mesh position={[0.4, -0.0, 0]} castShadow>
         <boxGeometry args={[0.8, 0.1, 0.7]} />
-        <meshStandardMaterial attach="material" color="#8E9196" />
+        <meshStandardMaterial color="#8E9196" />
       </mesh>
       
       {/* Shoe logo */}
       <mesh position={[-0.7, -0.3, 0.46]} castShadow>
         <circleGeometry args={[0.2, 32]} />
-        <meshStandardMaterial attach="material" color="#9b87f5" />
+        <meshStandardMaterial color="#9b87f5" />
       </mesh>
     </group>
   );
