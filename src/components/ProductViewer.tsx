@@ -5,13 +5,13 @@ import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
-// This component handles the 3D model loading
+// This component handles the 3D model loading - MUST be used within Canvas
 function ModelContent({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   return <primitive object={scene} scale={1} />;
 }
 
-// This component handles the controls
+// This component handles the controls - MUST be used within Canvas
 function SceneController() {
   const controlsRef = useRef(null);
   
@@ -45,7 +45,7 @@ function SceneController() {
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Preload the model - this is safe to do outside Canvas
+  // Preload the model - this is one of the few hooks safe to use outside Canvas
   useEffect(() => {
     useGLTF.preload('/shoe.glb');
   }, []);
