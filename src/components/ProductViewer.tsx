@@ -1,7 +1,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
-import { Suspense, useRef } from 'react';
+import { Suspense, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
@@ -20,6 +20,12 @@ export default function ProductViewer() {
       controlsRef.current.reset();
     }
   };
+
+  // Pre-load the model using useEffect instead of at module level
+  useEffect(() => {
+    // This is safe because useEffect runs in component context
+    useGLTF.preload('/shoe.glb');
+  }, []);
 
   return (
     <div className="w-full h-full min-h-[500px] relative">
@@ -54,6 +60,3 @@ export default function ProductViewer() {
     </div>
   );
 }
-
-// Pre-load the model
-useGLTF.preload('/shoe.glb');
