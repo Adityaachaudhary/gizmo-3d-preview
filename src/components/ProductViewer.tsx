@@ -1,6 +1,6 @@
 
 import React, { Suspense, useRef, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
@@ -9,19 +9,24 @@ import LoadingFallback from './LoadingFallback';
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Preload the model outside the Canvas
+  // Preload the model outside the Canvas - this is safe to do
   useEffect(() => {
     useGLTF.preload('/shoe.glb');
+    return () => {
+      // Cleanup preloaded models if needed
+      useGLTF.clear('/shoe.glb');
+    };
   }, []);
   
   return (
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
         <Canvas ref={canvasRef} shadows dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
+          {/* All Three.js components and hooks must be used within Canvas */}
           <Stage preset="rembrandt" intensity={0.6} shadows>
-            <ModelContent url="/shoe.glb" />
+            <Model url="/shoe.glb" />
           </Stage>
-          <SceneController />
+          <CanvasControls />
         </Canvas>
       </Suspense>
       <div className="absolute bottom-5 left-0 right-0 flex justify-center">
@@ -40,17 +45,15 @@ export default function ProductViewer() {
   );
 }
 
-// IMPORTANT: This component must be used within Canvas
-// This is a valid placement because it's rendered inside the Canvas in the parent component
-function ModelContent({ url }: { url: string }) {
-  // useGLTF is a hook from drei and must be used within Canvas context
+// Model component - MUST be used within Canvas
+function Model({ url }: { url: string }) {
+  // useGLTF hook is used correctly within the Canvas component's render tree
   const { scene } = useGLTF(url);
   return <primitive object={scene} scale={1} />;
 }
 
-// IMPORTANT: This component must be used within Canvas
-// This is a valid placement because it's rendered inside the Canvas in the parent component
-function SceneController() {
+// Controls component - MUST be used within Canvas
+function CanvasControls() {
   const controlsRef = useRef<any>(null);
   
   useEffect(() => {
