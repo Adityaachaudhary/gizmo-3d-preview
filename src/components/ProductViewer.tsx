@@ -1,5 +1,5 @@
 
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ function SceneController() {
   const controlsRef = useRef(null);
   
   // Use effect to setup event listener for the reset camera button
-  React.useEffect(() => {
+  useEffect(() => {
     // Create event listener for reset camera event
     const handleResetCamera = () => {
       if (controlsRef.current) {
@@ -50,7 +50,7 @@ export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // Preload the model outside of the Canvas
-  React.useEffect(() => {
+  useEffect(() => {
     useGLTF.preload('/shoe.glb');
   }, []);
   
