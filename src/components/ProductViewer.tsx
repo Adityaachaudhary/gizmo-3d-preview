@@ -1,4 +1,3 @@
-
 import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
@@ -7,7 +6,7 @@ import LoadingFallback from './LoadingFallback';
 
 // The main ProductViewer component
 export default function ProductViewer() {
-  // Don't use Three.js hooks outside of Canvas - removed preload from here
+  // Keep all Three.js related hooks inside Canvas components only
   return (
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
@@ -16,7 +15,6 @@ export default function ProductViewer() {
           dpr={[1, 2]} 
           camera={{ position: [0, 0, 4], fov: 50 }}
         >
-          {/* All Three.js components and hooks MUST be inside Canvas */}
           <SceneContent />
         </Canvas>
       </Suspense>
@@ -38,9 +36,9 @@ export default function ProductViewer() {
 
 // SceneContent component contains everything that needs Canvas context
 function SceneContent() {
-  // Move model preloading inside the Canvas context
+  // All Three.js hooks go here - this component is safely inside the Canvas
   useEffect(() => {
-    // Preload the model - now this is inside the Canvas context
+    // Preload the model - this is safe inside the Canvas context via SceneContent
     useGLTF.preload('/shoe.glb');
     
     return () => {
@@ -61,7 +59,7 @@ function SceneContent() {
         <Model url="/shoe.glb" />
       </Suspense>
       
-      {/* Camera controls */}
+      {/* Camera controls - safely inside Canvas context */}
       <CanvasControls />
     </>
   );
@@ -72,16 +70,14 @@ function FallbackBox() {
   return (
     <mesh position={[0, -0.5, 0]} castShadow>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial>
-        <color attach="color" args={[0xff69b4]} />
-      </meshStandardMaterial>
+      <meshStandardMaterial color="hotpink" />
     </mesh>
   );
 }
 
-// Model component - MUST be used within Canvas
+// Model component - used within Canvas via SceneContent
 function Model({ url }: { url: string }) {
-  // useGLTF is a Three.js hook that MUST be used within Canvas
+  // useGLTF is safely used within Canvas context
   const { scene } = useGLTF(url);
   
   // Apply some default treatments to the model
@@ -100,7 +96,7 @@ function Model({ url }: { url: string }) {
   return <primitive object={scene} scale={1} position={[0, -0.5, 0]} />;
 }
 
-// Controls component - MUST be used within Canvas
+// Controls component - used within Canvas via SceneContent
 function CanvasControls() {
   const controlsRef = useRef<any>(null);
   
