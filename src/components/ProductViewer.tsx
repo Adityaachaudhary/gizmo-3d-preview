@@ -71,7 +71,7 @@ function FallbackBox() {
   return (
     <mesh position={[0, -0.5, 0]} castShadow>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#ff69b4" /> {/* Using hex color code instead of named color */}
+      <meshStandardMaterial color={0xff69b4} /> {/* Using numeric color format for TypeScript compatibility */}
     </mesh>
   );
 }
