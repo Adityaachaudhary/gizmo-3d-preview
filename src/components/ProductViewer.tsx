@@ -6,20 +6,16 @@ import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
 // This component handles the 3D model loading
-// It must be used INSIDE the Canvas component
 function ModelContent({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   return <primitive object={scene} scale={1} />;
 }
 
-// This component handles the controls and is safely within the Canvas context
+// This component handles the controls
 function SceneController() {
-  // The ref must be created within this component that is inside the Canvas
   const controlsRef = useRef(null);
   
-  // Use effect to setup event listener for the reset camera button
   useEffect(() => {
-    // Create event listener for reset camera event
     const handleResetCamera = () => {
       if (controlsRef.current) {
         controlsRef.current.reset();
@@ -49,7 +45,7 @@ function SceneController() {
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Preload the model outside of the Canvas
+  // Preload the model - this is safe to do outside Canvas
   useEffect(() => {
     useGLTF.preload('/shoe.glb');
   }, []);
