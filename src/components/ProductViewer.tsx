@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
+import * as THREE from 'three';
 
 // The main ProductViewer component
 export default function ProductViewer() {
@@ -72,31 +73,31 @@ function DummyProduct() {
       {/* Main body - shoe sole */}
       <mesh position={[0, -0.7, 0]} castShadow receiveShadow>
         <boxGeometry args={[2, 0.2, 1]} />
-        <meshStandardMaterial color="#9b87f5" />
+        <meshStandardMaterial color={new THREE.Color("#9b87f5")} />
       </mesh>
       
       {/* Shoe upper front */}
       <mesh position={[0.4, -0.3, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.2, 0.6, 0.9]} />
-        <meshStandardMaterial color="#ffffff" />
+        <meshStandardMaterial color={new THREE.Color("#ffffff")} />
       </mesh>
       
       {/* Shoe heel */}
       <mesh position={[-0.7, -0.3, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.6, 0.6, 0.9]} />
-        <meshStandardMaterial color="#1A1F2C" />
+        <meshStandardMaterial color={new THREE.Color("#1A1F2C")} />
       </mesh>
       
       {/* Shoe laces */}
       <mesh position={[0.4, -0.0, 0]} castShadow>
         <boxGeometry args={[0.8, 0.1, 0.7]} />
-        <meshStandardMaterial color="#8E9196" />
+        <meshStandardMaterial color={new THREE.Color("#8E9196")} />
       </mesh>
       
       {/* Shoe logo */}
       <mesh position={[-0.7, -0.3, 0.46]} castShadow>
         <circleGeometry args={[0.2, 32]} />
-        <meshStandardMaterial color="#9b87f5" />
+        <meshStandardMaterial color={new THREE.Color("#9b87f5")} />
       </mesh>
     </group>
   );
