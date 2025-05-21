@@ -7,17 +7,7 @@ import LoadingFallback from './LoadingFallback';
 
 // The main ProductViewer component
 export default function ProductViewer() {
-  // We can safely preload models outside the Canvas
-  useEffect(() => {
-    // Preload the model
-    useGLTF.preload('/shoe.glb');
-    
-    return () => {
-      // Cleanup preloaded models
-      useGLTF.clear('/shoe.glb');
-    };
-  }, []);
-  
+  // Don't use Three.js hooks outside of Canvas - removed preload from here
   return (
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
@@ -48,6 +38,17 @@ export default function ProductViewer() {
 
 // SceneContent component contains everything that needs Canvas context
 function SceneContent() {
+  // Move model preloading inside the Canvas context
+  useEffect(() => {
+    // Preload the model - now this is inside the Canvas context
+    useGLTF.preload('/shoe.glb');
+    
+    return () => {
+      // Cleanup preloaded models
+      useGLTF.clear('/shoe.glb');
+    };
+  }, []);
+
   return (
     <>
       {/* Lighting setup */}
