@@ -5,43 +5,7 @@ import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
-// This component handles the 3D model loading - MUST be used within Canvas
-function ModelContent({ url }: { url: string }) {
-  const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
-}
-
-// This component handles the controls - MUST be used within Canvas
-function SceneController() {
-  const controlsRef = useRef(null);
-  
-  useEffect(() => {
-    const handleResetCamera = () => {
-      if (controlsRef.current) {
-        controlsRef.current.reset();
-      }
-    };
-    
-    window.addEventListener('reset-camera', handleResetCamera);
-    
-    return () => {
-      window.removeEventListener('reset-camera', handleResetCamera);
-    };
-  }, []);
-  
-  return (
-    <OrbitControls 
-      ref={controlsRef}
-      autoRotate 
-      autoRotateSpeed={0.5}
-      enablePan={false}
-      minPolarAngle={Math.PI / 4}
-      maxPolarAngle={Math.PI / 1.5}
-      makeDefault
-    />
-  );
-}
-
+// Main ProductViewer component
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -73,5 +37,44 @@ export default function ProductViewer() {
         </div>
       </div>
     </div>
+  );
+}
+
+// IMPORTANT: This component must be defined HERE, AFTER the main component
+// This component handles the 3D model loading - MUST be used within Canvas
+function ModelContent({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene} scale={1} />;
+}
+
+// IMPORTANT: This component must be defined HERE, AFTER the main component
+// This component handles the controls - MUST be used within Canvas
+function SceneController() {
+  const controlsRef = useRef<any>(null);
+  
+  useEffect(() => {
+    const handleResetCamera = () => {
+      if (controlsRef.current) {
+        controlsRef.current.reset();
+      }
+    };
+    
+    window.addEventListener('reset-camera', handleResetCamera);
+    
+    return () => {
+      window.removeEventListener('reset-camera', handleResetCamera);
+    };
+  }, []);
+  
+  return (
+    <OrbitControls 
+      ref={controlsRef}
+      autoRotate 
+      autoRotateSpeed={0.5}
+      enablePan={false}
+      minPolarAngle={Math.PI / 4}
+      maxPolarAngle={Math.PI / 1.5}
+      makeDefault
+    />
   );
 }
