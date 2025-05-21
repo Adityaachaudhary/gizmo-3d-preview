@@ -9,7 +9,7 @@ import LoadingFallback from './LoadingFallback';
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
-  // Preload the model - this is one of the few hooks safe to use outside Canvas
+  // Preload the model outside the Canvas
   useEffect(() => {
     useGLTF.preload('/shoe.glb');
   }, []);
@@ -18,7 +18,7 @@ export default function ProductViewer() {
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
         <Canvas ref={canvasRef} shadows dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
-          <Stage environment="city" intensity={0.6} shadows>
+          <Stage preset="rembrandt" intensity={0.6} shadows>
             <ModelContent url="/shoe.glb" />
           </Stage>
           <SceneController />
@@ -40,15 +40,16 @@ export default function ProductViewer() {
   );
 }
 
-// IMPORTANT: This component must be defined HERE, AFTER the main component
-// This component handles the 3D model loading - MUST be used within Canvas
+// IMPORTANT: This component must be used within Canvas
+// This is a valid placement because it's rendered inside the Canvas in the parent component
 function ModelContent({ url }: { url: string }) {
+  // useGLTF is a hook from drei and must be used within Canvas context
   const { scene } = useGLTF(url);
   return <primitive object={scene} scale={1} />;
 }
 
-// IMPORTANT: This component must be defined HERE, AFTER the main component
-// This component handles the controls - MUST be used within Canvas
+// IMPORTANT: This component must be used within Canvas
+// This is a valid placement because it's rendered inside the Canvas in the parent component
 function SceneController() {
   const controlsRef = useRef<any>(null);
   
