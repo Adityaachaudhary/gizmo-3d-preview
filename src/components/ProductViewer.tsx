@@ -1,5 +1,5 @@
 
-import React, { Suspense, useRef, useEffect } from 'react';
+import React, { Suspense, useRef, useEffect, useState, ErrorBoundary } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
@@ -56,9 +56,9 @@ function SceneContent() {
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} />
       
-      {/* Model with error handling */}
+      {/* Model with Suspense for error handling */}
       <Suspense fallback={<FallbackBox />}>
-        <ModelWithErrorBoundary url="/shoe.glb" />
+        <Model url="/shoe.glb" />
       </Suspense>
       
       {/* Camera controls */}
@@ -77,16 +77,6 @@ function FallbackBox() {
       </meshStandardMaterial>
     </mesh>
   );
-}
-
-// Model component with error boundary - MUST be used within Canvas
-function ModelWithErrorBoundary({ url }: { url: string }) {
-  try {
-    return <Model url={url} />;
-  } catch (error) {
-    console.error("Error loading model:", error);
-    return <FallbackBox />;
-  }
 }
 
 // Model component - MUST be used within Canvas
