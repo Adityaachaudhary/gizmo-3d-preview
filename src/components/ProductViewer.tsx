@@ -1,12 +1,12 @@
-import React, { Suspense, useRef, useEffect, useState } from 'react';
+
+import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
 // The main ProductViewer component
 export default function ProductViewer() {
-  // Keep all Three.js related hooks inside Canvas components only
   return (
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
@@ -36,17 +36,6 @@ export default function ProductViewer() {
 
 // SceneContent component contains everything that needs Canvas context
 function SceneContent() {
-  // All Three.js hooks go here - this component is safely inside the Canvas
-  useEffect(() => {
-    // Preload the model - this is safe inside the Canvas context via SceneContent
-    useGLTF.preload('/shoe.glb');
-    
-    return () => {
-      // Cleanup preloaded models
-      useGLTF.clear('/shoe.glb');
-    };
-  }, []);
-
   return (
     <>
       {/* Lighting setup */}
@@ -54,46 +43,63 @@ function SceneContent() {
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} />
       
-      {/* Model with Suspense for error handling */}
-      <Suspense fallback={<FallbackBox />}>
-        <Model url="/shoe.glb" />
-      </Suspense>
+      {/* Using a dummy product instead of loading external model */}
+      <DummyProduct />
       
-      {/* Camera controls - safely inside Canvas context */}
+      {/* Camera controls */}
       <CanvasControls />
     </>
   );
 }
 
-// Simple fallback box when model fails to load
-function FallbackBox() {
-  return (
-    <mesh position={[0, -0.5, 0]} castShadow>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="hotpink" />
-    </mesh>
-  );
-}
-
-// Model component - used within Canvas via SceneContent
-function Model({ url }: { url: string }) {
-  // useGLTF is safely used within Canvas context
-  const { scene } = useGLTF(url);
+// DummyProduct component as a replacement for the external model
+function DummyProduct() {
+  const groupRef = useRef<THREE.Group>(null);
   
-  // Apply some default treatments to the model
   useEffect(() => {
-    if (scene) {
-      scene.traverse((child: any) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-    }
-  }, [scene]);
+    // Simple animation for the group
+    const interval = setInterval(() => {
+      if (groupRef.current) {
+        groupRef.current.rotation.y += 0.01;
+      }
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, []);
   
-  // Position the model slightly below center for better composition
-  return <primitive object={scene} scale={1} position={[0, -0.5, 0]} />;
+  return (
+    <group ref={groupRef} position={[0, 0, 0]}>
+      {/* Main body - shoe sole */}
+      <mesh position={[0, -0.7, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2, 0.2, 1]} />
+        <meshStandardMaterial color="#9b87f5" />
+      </mesh>
+      
+      {/* Shoe upper front */}
+      <mesh position={[0.4, -0.3, 0]} castShadow receiveShadow>
+        <boxGeometry args={[1.2, 0.6, 0.9]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      
+      {/* Shoe heel */}
+      <mesh position={[-0.7, -0.3, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.6, 0.6, 0.9]} />
+        <meshStandardMaterial color="#1A1F2C" />
+      </mesh>
+      
+      {/* Shoe laces */}
+      <mesh position={[0.4, -0.0, 0]} castShadow>
+        <boxGeometry args={[0.8, 0.1, 0.7]} />
+        <meshStandardMaterial color="#8E9196" />
+      </mesh>
+      
+      {/* Shoe logo */}
+      <mesh position={[-0.7, -0.3, 0.46]} castShadow>
+        <circleGeometry args={[0.2, 32]} />
+        <meshStandardMaterial color="#9b87f5" />
+      </mesh>
+    </group>
+  );
 }
 
 // Controls component - used within Canvas via SceneContent
