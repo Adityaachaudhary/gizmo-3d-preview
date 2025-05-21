@@ -5,11 +5,7 @@ import { Suspense, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
 
-function Model({ url }: { url: string }) {
-  const { scene } = useGLTF(url);
-  return <primitive object={scene} scale={1} />;
-}
-
+// Move the Model component inside the Canvas to ensure useGLTF is used within Canvas context
 export default function ProductViewer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
@@ -32,7 +28,8 @@ export default function ProductViewer() {
       <Suspense fallback={<LoadingFallback />}>
         <Canvas ref={canvasRef} shadows dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
           <Stage environment="city" intensity={0.6} shadows>
-            <Model url="/shoe.glb" />
+            {/* Define Model component within JSX to ensure it's evaluated in the Canvas context */}
+            <ModelContent url="/shoe.glb" />
           </Stage>
           <OrbitControls 
             ref={controlsRef}
@@ -59,4 +56,10 @@ export default function ProductViewer() {
       </div>
     </div>
   );
+}
+
+// This component is now defined and used directly inside the Canvas context
+function ModelContent({ url }: { url: string }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene} scale={1} />;
 }
