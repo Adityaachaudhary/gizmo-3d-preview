@@ -1,6 +1,6 @@
 
 import React, { Suspense, useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stage, useGLTF } from '@react-three/drei';
 import { Button } from "@/components/ui/button";
 import LoadingFallback from './LoadingFallback';
@@ -11,7 +11,9 @@ export default function ProductViewer() {
   
   // Preload the model outside the Canvas - this is safe to do
   useEffect(() => {
+    // Preload the model - this doesn't require Canvas context
     useGLTF.preload('/shoe.glb');
+    
     return () => {
       // Cleanup preloaded models if needed
       useGLTF.clear('/shoe.glb');
@@ -24,8 +26,10 @@ export default function ProductViewer() {
         <Canvas ref={canvasRef} shadows dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
           {/* All Three.js components and hooks must be used within Canvas */}
           <Stage preset="rembrandt" intensity={0.6} shadows>
+            {/* Model component is defined inside Canvas context */}
             <Model url="/shoe.glb" />
           </Stage>
+          {/* Controls component is defined inside Canvas context */}
           <CanvasControls />
         </Canvas>
       </Suspense>
@@ -47,14 +51,15 @@ export default function ProductViewer() {
 
 // Model component - MUST be used within Canvas
 function Model({ url }: { url: string }) {
-  // useGLTF hook is used correctly within the Canvas component's render tree
+  // useGLTF hook is only used within the Canvas component's render tree
   const { scene } = useGLTF(url);
   return <primitive object={scene} scale={1} />;
 }
 
 // Controls component - MUST be used within Canvas
 function CanvasControls() {
-  const controlsRef = useRef<any>(null);
+  // Define a proper type for the ref
+  const controlsRef = useRef<typeof OrbitControls>(null);
   
   useEffect(() => {
     const handleResetCamera = () => {
