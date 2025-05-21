@@ -25,7 +25,7 @@ export default function ProductViewer() {
     <div className="w-full h-full min-h-[500px] relative">
       <Suspense fallback={<LoadingFallback />}>
         <Canvas ref={canvasRef} shadows dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 50 }}>
-          <Stage environment="city" intensity={0.6} contactShadow={false}>
+          <Stage environment="city" intensity={0.6} shadows>
             <Model url="/shoe.glb" />
           </Stage>
           <OrbitControls 
